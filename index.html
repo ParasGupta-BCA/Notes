@@ -50,16 +50,42 @@
 
         // Disable common keyboard shortcuts
         document.addEventListener("keydown", function(event) {
-            if (event.ctrlKey && (event.key === 's' || event.key === 'p' || event.key === 'u')) {
+            if (event.ctrlKey && (event.key === 's' || event.key === 'p' || event.key === 'u' || event.key === 'c' || event.key === 'j' || event.key === 'i' || event.key === 'k')) {
+                event.preventDefault();
+            }
+            if (event.keyCode == 123) { // F12
                 event.preventDefault();
             }
         });
 
-        // Redirect to OneDrive link
+        // Try to remove the OneDrive Download button every second
+        setInterval(function() {
+            let downloadBtn = document.querySelector("button[aria-label='Download']");
+            if (downloadBtn) {
+                downloadBtn.style.display = "none";
+            }
+        }, 1000); // Run every second
+
+        // Redirect to OneDrive after 2 seconds
         setTimeout(function() {
             window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBguPTZI6lipFn7vLQPJcx-w";
-        }, 2000); // 2-second delay
+        }, 2000);
     }
+
+    // Block developer tools
+    (function() {
+        function devToolCheck() {
+            let element = new Image();
+            Object.defineProperty(element, 'id', {
+                get: function() {
+                    alert("Developer Tools are disabled!");
+                    window.location.href = "about:blank";
+                }
+            });
+            console.log('%c', element);
+        }
+        setInterval(devToolCheck, 1000);
+    })();
 </script>
 
 </body>
