@@ -6,12 +6,13 @@
     <title>Secure OneDrive Access</title>
     <style>
         body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f4;
-            text-align: center;
         }
         .popup {
             background: white;
@@ -43,14 +44,14 @@
     function proceed() {
         document.getElementById("popup").style.display = "none"; // Hide popup
 
-        // Disable right-click
+        // ❌ Disable Right-Click
         document.addEventListener("contextmenu", function(event) {
             event.preventDefault();
         });
 
-        // Disable common keyboard shortcuts
+        // ❌ Disable Common Keyboard Shortcuts
         document.addEventListener("keydown", function(event) {
-            if (event.ctrlKey && (event.key === 's' || event.key === 'p' || event.key === 'u' || event.key === 'c' || event.key === 'j' || event.key === 'i' || event.key === 'k')) {
+            if (event.ctrlKey && (event.key === 's' || event.key === 'p' || event.key === 'u' || event.key === 'c' || event.key === 'j' || event.key === 'i' || event.key === 'k' || event.key === 'x' || event.key === 'v' || event.key === 'a')) {
                 event.preventDefault();
             }
             if (event.keyCode == 123) { // F12
@@ -58,34 +59,65 @@
             }
         });
 
-        // Try to remove the OneDrive Download button every second
+        // ❌ Block Copy-Paste
+        document.body.style.userSelect = "none";
+        document.addEventListener("copy", (e) => e.preventDefault());
+        document.addEventListener("cut", (e) => e.preventDefault());
+        document.addEventListener("paste", (e) => e.preventDefault());
+
+        // ❌ Block Drag & Drop Download
+        document.addEventListener("dragstart", (e) => e.preventDefault());
+        document.addEventListener("drop", (e) => e.preventDefault());
+
+        // ❌ Block "Save As" Download Prompt
+        document.addEventListener("keydown", function(event) {
+            if (event.ctrlKey && event.key === 's') {
+                alert("Download is disabled!");
+                event.preventDefault();
+            }
+        });
+
+        // ❌ Hide OneDrive "Download" Button Every 1 Second
         setInterval(function() {
-            let downloadBtn = document.querySelector("button[aria-label='Download']");
+            let downloadBtn = document.querySelector("button[aria-label='Download'], a[aria-label='Download']");
             if (downloadBtn) {
                 downloadBtn.style.display = "none";
             }
-        }, 1000); // Run every second
+        }, 1000);
 
-        // Redirect to OneDrive after 2 seconds
+        // ❌ Disable Browser's Download Feature
+        (function() {
+            const originalOpen = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function(method, url) {
+                if (method === 'GET' && url.includes('download')) {
+                    alert("Download is blocked!");
+                    return;
+                }
+                return originalOpen.apply(this, arguments);
+            };
+        })();
+
+        // ❌ Block Developer Tools (Inspect Element)
+        (function() {
+            function devToolCheck() {
+                let element = new Image();
+                Object.defineProperty(element, 'id', {
+                    get: function() {
+                        alert("Developer Tools are disabled!");
+                        window.location.href = "about:blank";
+                    }
+                });
+                console.log('%c', element);
+            }
+            setInterval(devToolCheck, 1000);
+        })();
+
+        // ✅ Redirect to OneDrive After 2 Seconds (Masked Link)
         setTimeout(function() {
-            window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBguPTZI6lipFn7vLQPJcx-w";
+            let realLink = atob("aHR0cHM6Ly8xZHJ2Lm1zL2YvYy83MTRkOGRhYjVlMjZiZWMyL0V1RGYzcXJRWTk1S2dWcUpjb3I3alRRQmd1UFRaSTZsaXBGbjd2TFFQSmN4LXc=");
+            window.location.href = realLink;
         }, 2000);
     }
-
-    // Block developer tools
-    (function() {
-        function devToolCheck() {
-            let element = new Image();
-            Object.defineProperty(element, 'id', {
-                get: function() {
-                    alert("Developer Tools are disabled!");
-                    window.location.href = "about:blank";
-                }
-            });
-            console.log('%c', element);
-        }
-        setInterval(devToolCheck, 1000);
-    })();
 </script>
 
 </body>
