@@ -41,13 +41,34 @@
 </div>
 
 <script>
+    let rightClickAttempts = 0; // Track right-click attempts
+
     function proceed() {
         document.getElementById("popup").style.display = "none"; // Hide popup
 
-        // ❌ Disable Right-Click & Show Alert
+        // ❌ Disable Right-Click & Show Alert on Repeated Attempts
         document.addEventListener("contextmenu", function(event) {
             event.preventDefault();
-            alert("Right-click is disabled for security reasons!");
+            rightClickAttempts++;
+
+            let messages = [
+                "Right-click is disabled!",
+                "Stop trying to right-click!",
+                "This action is not allowed!",
+                "Repeated attempts detected!",
+                "You are being monitored!",
+                "Warning! Further attempts will lock you out!",
+                "Final warning! Last chance!",
+                "Access Denied! Redirecting..."
+            ];
+
+            let messageIndex = Math.min(rightClickAttempts - 1, messages.length - 1);
+            alert(messages[messageIndex]);
+
+            // 🚨 If user reaches last warning, redirect to a blank page
+            if (rightClickAttempts >= messages.length) {
+                window.location.href = "about:blank";
+            }
         });
 
         // ❌ Disable Common Keyboard Shortcuts
@@ -62,22 +83,7 @@
             }
         });
 
-        // ❌ Block Developer Tools (Inspect Element)
-        (function() {
-            function devToolCheck() {
-                let element = new Image();
-                Object.defineProperty(element, 'id', {
-                    get: function() {
-                        alert("Developer Tools are disabled!");
-                        window.location.href = "about:blank";
-                    }
-                });
-                console.log('%c', element);
-            }
-            setInterval(devToolCheck, 1000);
-        })();
-
-        // ❌ Detect If DevTools is Open (Advanced Method)
+        // ❌ Detect If DevTools Is Open (Advanced Method)
         (function() {
             let devtools = { open: false, orientation: null };
             let threshold = 160;
