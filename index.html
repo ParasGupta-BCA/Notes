@@ -138,6 +138,22 @@
         setTimeout(() => {
             popup.style.display = "none";
 
+            // Create a loading screen element
+const loadingScreen = document.createElement("div");
+loadingScreen.className = "loading-screen";
+loadingScreen.id = "loadingScreen";
+loadingScreen.textContent = "Loading...";
+
+document.body.appendChild(loadingScreen);
+
+// Function to remove the loading screen after content loads
+function hideLoadingScreen() {
+    loadingScreen.style.display = "none";
+}
+
+// Example: Remove the loading screen after 3 seconds (simulating content load)
+setTimeout(hideLoadingScreen, 3000);
+
             // Redirect to your secure file link
             window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
 
