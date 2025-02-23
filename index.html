@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Access</title>
     <style>
-        /* 🌑 Apple-Inspired Dark UI */
+        /* 🌑 Dark Mode Apple-Inspired Styling */
         * {
             margin: 0;
             padding: 0;
@@ -14,54 +14,33 @@
         }
         body {
             background-color: #121212;
-            color: white;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
         }
-        /* 📌 Pop-Up Container */
-        .popup-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 350px;
+        .popup {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 25px;
+            padding: 30px;
             border-radius: 15px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            transform: translate(-50%, -60%);
-            animation: fadeInUp 0.6s ease-out forwards;
+            transition: all 0.3s ease-in-out;
         }
-        /* 🚀 Pop-Up Animation */
-        @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -60%);
-            }
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-        }
-        .popup-container h2 {
-            font-size: 22px;
+        .popup h2 {
+            font-size: 24px;
             font-weight: 600;
             margin-bottom: 10px;
         }
-        .popup-container p {
-            font-size: 15px;
+        .popup p {
+            font-size: 16px;
             opacity: 0.8;
             margin-bottom: 20px;
         }
-        /* 🔘 Button */
-        .popup-container button {
+        .popup button {
             background: linear-gradient(135deg, #007aff, #0051a8);
             color: white;
             border: none;
@@ -72,42 +51,97 @@
             border-radius: 8px;
             transition: all 0.3s;
         }
-        .popup-container button:hover {
+        .popup button:hover {
             background: linear-gradient(135deg, #0051a8, #003f7d);
             transform: scale(1.05);
         }
-        /* 🔥 Close Animation */
         .fade-out {
-            animation: fadeOut 0.5s ease-in-out forwards;
-        }
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -60%);
-            }
+            opacity: 0;
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
 
-<!-- 🍏 Apple-Style Pop-Up -->
-<div class="popup-container" id="popup">
+<!-- 🍏 Apple-Style Popup -->
+<div class="popup" id="popup">
     <h2>🔒 Secure Access</h2>
     <p>Click "Proceed" to continue.</p>
-    <button onclick="closePopup()">Proceed</button>
+    <button onclick="proceed()">Proceed</button>
 </div>
 
 <script>
-    function closePopup() {
+    let rightClickAttempts = 0; // Track right-click attempts
+
+    // ❌ Disable Right-Click from the Start
+    document.addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+        rightClickAttempts++;
+
+        let messages = [
+            "⚠️ Right-click is disabled!",
+            "🚫 Stop trying to right-click!",
+            "🔒 This action is not allowed!",
+            "⚡ Repeated attempts detected!",
+            "👀 You are being monitored!",
+            "⚠️ Final warning! Last chance!",
+            "⛔ Access Denied! Redirecting..."
+        ];
+
+        let messageIndex = Math.min(rightClickAttempts - 1, messages.length - 1);
+        alert(messages[messageIndex]);
+
+        // 🚨 If user reaches last warning, redirect to blank page
+        if (rightClickAttempts >= messages.length) {
+            window.location.href = "about:blank";
+        }
+    });
+
+    function proceed() {
         let popup = document.getElementById("popup");
         popup.classList.add("fade-out");
+
         setTimeout(() => {
             popup.style.display = "none";
-        }, 500);
+
+            // 🚀 Redirect to URL after clicking Proceed
+            window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
+
+            // ❌ Disable Common Keyboard Shortcuts
+            document.addEventListener("keydown", function(event) {
+                if (event.ctrlKey && (event.key === 's' || event.key === 'p' || event.key === 'u' || event.key === 'c' || event.key === 'j' || event.key === 'i' || event.key === 'k' || event.key === 'x' || event.key === 'v' || event.key === 'a')) {
+                    event.preventDefault();
+                    alert("🚫 Keyboard shortcuts are disabled!");
+                }
+                if (event.keyCode == 123) { // F12
+                    event.preventDefault();
+                    alert("🔒 Developer tools are disabled!");
+                }
+            });
+
+            // ❌ Detect If DevTools Is Open
+            (function() {
+                let devtools = { open: false };
+                let threshold = 160;
+                let emitEvent = (state) => {
+                    if (state === "open") {
+                        alert("⛔ Access Denied! Developer tools are not allowed.");
+                        window.location.href = "about:blank";
+                    }
+                };
+
+                setInterval(() => {
+                    let widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                    let heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                    let isOpen = widthThreshold || heightThreshold;
+                    if (isOpen !== devtools.open) {
+                        emitEvent(isOpen ? "open" : "closed");
+                        devtools.open = isOpen;
+                    }
+                }, 1000);
+            })();
+
+        }, 300); // Smooth transition delay
     }
 </script>
 
