@@ -18,11 +18,9 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            flex-direction: column;
             padding: 15px;
         }
         .loading-screen {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -36,45 +34,75 @@
             font-weight: bold;
             color: #ffffff;
         }
-        .proceed-button {
-            background-color: #008CBA;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 18px;
-            cursor: pointer;
+        .popup {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
+            max-width: 400px;
+            width: 100%;
+            display: none;
         }
-        .proceed-button:hover {
-            background-color: #0073a5;
+        .popup h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .popup p {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+        .popup button {
+            background: linear-gradient(135deg, #007aff, #0051a8);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        .popup button:hover {
+            background: linear-gradient(135deg, #0051a8, #003f7d);
+            transform: scale(1.05);
+        }
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
 
-<!-- Button to proceed -->
-<button class="proceed-button" onclick="startRedirect()">Proceed</button>
-
 <!-- Loading Screen -->
 <div class="loading-screen" id="loadingScreen">Loading...</div>
 
-<script>
-    function startRedirect() {
-        document.querySelector(".proceed-button").style.display = "none"; // Hide button
-        document.getElementById("loadingScreen").style.display = "flex"; // Show loading screen
-        
-        // Load the secure link in the background
-        let preload = new Image();
-        preload.src = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
+<!-- Secure Popup -->
+<div class="popup" id="popup">
+    <h2>🔒 Secure Access</h2>
+    <p>Click "Proceed" to continue.</p>
+    <button onclick="proceed()">Proceed</button>
+</div>
 
-        // Redirect after 2 seconds
+<script>
+    let rightClickAttempts = 0;
+
+    // Show loading screen and then show popup
+    window.onload = function () {
         setTimeout(() => {
-            window.location.href = preload.src;
+            document.getElementById("loadingScreen").style.display = "none";
+            document.getElementById("popup").style.display = "block";
         }, 2000);
-    }
+    };
 
     // Disable Right-Click
-    let rightClickAttempts = 0;
     document.addEventListener("contextmenu", function(event) {
         event.preventDefault();
         rightClickAttempts++;
@@ -103,39 +131,52 @@
         }
     });
 
-    // Disable Keyboard Shortcuts
-    document.addEventListener("keydown", function(event) {
-        if (event.ctrlKey && ['s', 'p', 'u', 'c', 'j', 'i', 'k', 'x', 'v', 'a'].includes(event.key)) {
-            event.preventDefault();
-            alert("🚫 Keyboard shortcuts are disabled!");
-        }
-        if (event.keyCode == 123) { 
-            event.preventDefault();
-            alert("🔒 Developer tools are disabled!");
-        }
-    });
+    function proceed() {
+        let popup = document.getElementById("popup");
+        popup.classList.add("fade-out");
 
-    // Detect DevTools Open
-    (function() {
-        let devtools = { open: false };
-        let threshold = 160;
-        let emitEvent = (state) => {
-            if (state === "open") {
-                alert("⛔ Access Denied! Developer tools are not allowed.");
-                window.location.href = "about:blank";
-            }
-        };
+        setTimeout(() => {
+            popup.style.display = "none";
 
-        setInterval(() => {
-            let widthThreshold = window.outerWidth - window.innerWidth > threshold;
-            let heightThreshold = window.outerHeight - window.innerHeight > threshold;
-            let isOpen = widthThreshold || heightThreshold;
-            if (isOpen !== devtools.open) {
-                emitEvent(isOpen ? "open" : "closed");
-                devtools.open = isOpen;
-            }
-        }, 1000);
-    })();
+            // Redirect to your secure file link
+            window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
+
+            // Disable Keyboard Shortcuts
+            document.addEventListener("keydown", function(event) {
+                if (event.ctrlKey && ['s', 'p', 'u', 'c', 'j', 'i', 'k', 'x', 'v', 'a'].includes(event.key)) {
+                    event.preventDefault();
+                    alert("🚫 Keyboard shortcuts are disabled!");
+                }
+                if (event.keyCode == 123) { 
+                    event.preventDefault();
+                    alert("🔒 Developer tools are disabled!");
+                }
+            });
+
+            // Detect DevTools Open
+            (function() {
+                let devtools = { open: false };
+                let threshold = 160;
+                let emitEvent = (state) => {
+                    if (state === "open") {
+                        alert("⛔ Access Denied! Developer tools are not allowed.");
+                        window.location.href = "about:blank";
+                    }
+                };
+
+                setInterval(() => {
+                    let widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                    let heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                    let isOpen = widthThreshold || heightThreshold;
+                    if (isOpen !== devtools.open) {
+                        emitEvent(isOpen ? "open" : "closed");
+                        devtools.open = isOpen;
+                    }
+                }, 1000);
+            })();
+
+        }, 300); 
+    }
 </script>
 
 </body>
