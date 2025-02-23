@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Access</title>
     <style>
-        /* 🌑 Dark Mode Apple-Inspired Styling */
         * {
             margin: 0;
             padding: 0;
@@ -19,19 +18,22 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            padding: 15px;
         }
         .popup {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 30px;
+            padding: 25px;
             border-radius: 15px;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease-in-out;
+            max-width: 400px;
+            width: 100%;
         }
         .popup h2 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
             margin-bottom: 10px;
         }
@@ -44,12 +46,13 @@
             background: linear-gradient(135deg, #007aff, #0051a8);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 20px;
             cursor: pointer;
             font-size: 16px;
             font-weight: 500;
             border-radius: 8px;
             transition: all 0.3s;
+            width: 100%;
         }
         .popup button:hover {
             background: linear-gradient(135deg, #0051a8, #003f7d);
@@ -63,7 +66,7 @@
 </head>
 <body>
 
-<!-- 🍏 Apple-Style Popup -->
+<!-- 🔒 Secure Popup -->
 <div class="popup" id="popup">
     <h2>🔒 Secure Access</h2>
     <p>Click "Proceed" to continue.</p>
@@ -71,9 +74,9 @@
 </div>
 
 <script>
-    let rightClickAttempts = 0; // Track right-click attempts
+    let rightClickAttempts = 0;
 
-    // ❌ Disable Right-Click from the Start
+    // ❌ Disable Right-Click
     document.addEventListener("contextmenu", function(event) {
         event.preventDefault();
         rightClickAttempts++;
@@ -84,16 +87,21 @@
             "🔒 This action is not allowed!",
             "⚡ Repeated attempts detected!",
             "👀 You are being monitored!",
-            "⚠️ Final warning! Last chance!",
             "⛔ Access Denied! Redirecting..."
         ];
 
         let messageIndex = Math.min(rightClickAttempts - 1, messages.length - 1);
         alert(messages[messageIndex]);
 
-        // 🚨 If user reaches last warning, redirect to blank page
         if (rightClickAttempts >= messages.length) {
             window.location.href = "about:blank";
+        }
+    });
+
+    // ❌ Disable Long Press on Mobile
+    document.addEventListener("touchstart", function(event) {
+        if (event.touches.length > 1) { 
+            event.preventDefault();
         }
     });
 
@@ -104,22 +112,22 @@
         setTimeout(() => {
             popup.style.display = "none";
 
-            // 🚀 Redirect to URL after clicking Proceed
+            // 🚀 Redirect to your secure file link
             window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
 
-            // ❌ Disable Common Keyboard Shortcuts
+            // ❌ Disable Keyboard Shortcuts
             document.addEventListener("keydown", function(event) {
-                if (event.ctrlKey && (event.key === 's' || event.key === 'p' || event.key === 'u' || event.key === 'c' || event.key === 'j' || event.key === 'i' || event.key === 'k' || event.key === 'x' || event.key === 'v' || event.key === 'a')) {
+                if (event.ctrlKey && ['s', 'p', 'u', 'c', 'j', 'i', 'k', 'x', 'v', 'a'].includes(event.key)) {
                     event.preventDefault();
                     alert("🚫 Keyboard shortcuts are disabled!");
                 }
-                if (event.keyCode == 123) { // F12
+                if (event.keyCode == 123) { 
                     event.preventDefault();
                     alert("🔒 Developer tools are disabled!");
                 }
             });
 
-            // ❌ Detect If DevTools Is Open
+            // ❌ Detect DevTools Open
             (function() {
                 let devtools = { open: false };
                 let threshold = 160;
@@ -141,7 +149,7 @@
                 }, 1000);
             })();
 
-        }, 300); // Smooth transition delay
+        }, 300); 
     }
 </script>
 
