@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure OneDrive Access</title>
+    <title>Secure Access</title>
     <style>
         body {
             text-align: center;
@@ -36,7 +36,7 @@
 
 <!-- Popup Message -->
 <div class="popup" id="popup">
-    <p>Downloading is disabled. Click "Proceed" to continue.</p>
+    <p>Secure Access Enabled. Click "Proceed" to continue.</p>
     <button onclick="proceed()">Proceed</button>
 </div>
 
@@ -59,44 +59,6 @@
             }
         });
 
-        // ❌ Block Copy-Paste
-        document.body.style.userSelect = "none";
-        document.addEventListener("copy", (e) => e.preventDefault());
-        document.addEventListener("cut", (e) => e.preventDefault());
-        document.addEventListener("paste", (e) => e.preventDefault());
-
-        // ❌ Block Drag & Drop Download
-        document.addEventListener("dragstart", (e) => e.preventDefault());
-        document.addEventListener("drop", (e) => e.preventDefault());
-
-        // ❌ Block "Save As" Download Prompt
-        document.addEventListener("keydown", function(event) {
-            if (event.ctrlKey && event.key === 's') {
-                alert("Download is disabled!");
-                event.preventDefault();
-            }
-        });
-
-        // ❌ Hide OneDrive "Download" Button Every 1 Second
-        setInterval(function() {
-            let downloadBtn = document.querySelector("button[aria-label='Download'], a[aria-label='Download']");
-            if (downloadBtn) {
-                downloadBtn.style.display = "none";
-            }
-        }, 1000);
-
-        // ❌ Disable Browser's Download Feature
-        (function() {
-            const originalOpen = XMLHttpRequest.prototype.open;
-            XMLHttpRequest.prototype.open = function(method, url) {
-                if (method === 'GET' && url.includes('download')) {
-                    alert("Download is blocked!");
-                    return;
-                }
-                return originalOpen.apply(this, arguments);
-            };
-        })();
-
         // ❌ Block Developer Tools (Inspect Element)
         (function() {
             function devToolCheck() {
@@ -112,11 +74,27 @@
             setInterval(devToolCheck, 1000);
         })();
 
-        // ✅ Redirect to OneDrive After 2 Seconds (Masked Link)
-        setTimeout(function() {
-            let realLink = atob("aHR0cHM6Ly8xZHJ2Lm1zL2YvYy83MTRkOGRhYjVlMjZiZWMyL0V1RGYzcXJRWTk1S2dWcUpjb3I3alRRQmd1UFRaSTZsaXBGbjd2TFFQSmN4LXc=");
-            window.location.href = realLink;
-        }, 2000);
+        // ❌ Detect If DevTools is Open (Advanced Method)
+        (function() {
+            let devtools = { open: false, orientation: null };
+            let threshold = 160;
+            let emitEvent = (state) => {
+                if (state === "open") {
+                    alert("Access Denied! Developer tools are not allowed.");
+                    window.location.href = "about:blank";
+                }
+            };
+
+            setInterval(() => {
+                let widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                let heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                let isOpen = widthThreshold || heightThreshold;
+                if (isOpen !== devtools.open) {
+                    emitEvent(isOpen ? "open" : "closed");
+                    devtools.open = isOpen;
+                }
+            }, 1000);
+        })();
     }
 </script>
 
