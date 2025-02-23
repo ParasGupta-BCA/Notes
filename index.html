@@ -5,39 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Access</title>
     <style>
+        /* 🌑 Dark Mode Apple-Inspired Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
         body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #121212;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
         }
         .popup {
-            background: white;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
+        }
+        .popup h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .popup p {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 20px;
         }
         .popup button {
-            background-color: #007bff;
+            background: linear-gradient(135deg, #007aff, #0051a8);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             cursor: pointer;
             font-size: 16px;
-            margin-top: 10px;
-            border-radius: 3px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .popup button:hover {
+            background: linear-gradient(135deg, #0051a8, #003f7d);
+            transform: scale(1.05);
+        }
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
 
-<!-- Popup Message -->
+<!-- 🍏 Apple-Style Popup -->
 <div class="popup" id="popup">
-    <p>Secure Access Enabled. Click "Proceed" to continue.</p>
+    <h2>🔒 Secure Access</h2>
+    <p>Click "Proceed" to continue.</p>
     <button onclick="proceed()">Proceed</button>
 </div>
 
@@ -50,61 +79,66 @@
         rightClickAttempts++;
 
         let messages = [
-            "Right-click is disabled!",
-            "Stop trying to right-click!",
-            "This action is not allowed!",
-            "Repeated attempts detected!",
-            "You are being monitored!",
-            "Warning! Further attempts will lock you out!",
-            "Final warning! Last chance!",
-            "Access Denied! Redirecting..."
+            "⚠️ Right-click is disabled!",
+            "🚫 Stop trying to right-click!",
+            "🔒 This action is not allowed!",
+            "⚡ Repeated attempts detected!",
+            "👀 You are being monitored!",
+            "⚠️ Final warning! Last chance!",
+            "⛔ Access Denied! Redirecting..."
         ];
 
         let messageIndex = Math.min(rightClickAttempts - 1, messages.length - 1);
         alert(messages[messageIndex]);
 
-        // 🚨 If user reaches last warning, redirect to a blank page
+        // 🚨 If user reaches last warning, redirect to blank page
         if (rightClickAttempts >= messages.length) {
             window.location.href = "about:blank";
         }
     });
 
     function proceed() {
-        document.getElementById("popup").style.display = "none"; // Hide popup
+        let popup = document.getElementById("popup");
+        popup.classList.add("fade-out");
 
-        // ❌ Disable Common Keyboard Shortcuts
-        document.addEventListener("keydown", function(event) {
-            if (event.ctrlKey && (event.key === 's' || event.key === 'p' || event.key === 'u' || event.key === 'c' || event.key === 'j' || event.key === 'i' || event.key === 'k' || event.key === 'x' || event.key === 'v' || event.key === 'a')) {
-                event.preventDefault();
-                alert("Keyboard shortcuts are disabled!");
-            }
-            if (event.keyCode == 123) { // F12
-                event.preventDefault();
-                alert("Developer tools are disabled!");
-            }
-        });
+        setTimeout(() => {
+            popup.style.display = "none";
 
-        // ❌ Detect If DevTools Is Open (Advanced Method)
-        (function() {
-            let devtools = { open: false, orientation: null };
-            let threshold = 160;
-            let emitEvent = (state) => {
-                if (state === "open") {
-                    alert("Access Denied! Developer tools are not allowed.");
-                    window.location.href = "about:blank";
+            // ❌ Disable Common Keyboard Shortcuts
+            document.addEventListener("keydown", function(event) {
+                if (event.ctrlKey && (event.key === 's' || event.key === 'p' || event.key === 'u' || event.key === 'c' || event.key === 'j' || event.key === 'i' || event.key === 'k' || event.key === 'x' || event.key === 'v' || event.key === 'a')) {
+                    event.preventDefault();
+                    alert("🚫 Keyboard shortcuts are disabled!");
                 }
-            };
-
-            setInterval(() => {
-                let widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                let heightThreshold = window.outerHeight - window.innerHeight > threshold;
-                let isOpen = widthThreshold || heightThreshold;
-                if (isOpen !== devtools.open) {
-                    emitEvent(isOpen ? "open" : "closed");
-                    devtools.open = isOpen;
+                if (event.keyCode == 123) { // F12
+                    event.preventDefault();
+                    alert("🔒 Developer tools are disabled!");
                 }
-            }, 1000);
-        })();
+            });
+
+            // ❌ Detect If DevTools Is Open
+            (function() {
+                let devtools = { open: false };
+                let threshold = 160;
+                let emitEvent = (state) => {
+                    if (state === "open") {
+                        alert("⛔ Access Denied! Developer tools are not allowed.");
+                        window.location.href = "about:blank";
+                    }
+                };
+
+                setInterval(() => {
+                    let widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                    let heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                    let isOpen = widthThreshold || heightThreshold;
+                    if (isOpen !== devtools.open) {
+                        emitEvent(isOpen ? "open" : "closed");
+                        devtools.open = isOpen;
+                    }
+                }, 1000);
+            })();
+
+        }, 300); // Smooth transition delay
     }
 </script>
 
