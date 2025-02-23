@@ -34,49 +34,6 @@
             font-weight: bold;
             color: #ffffff;
         }
-        .popup {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease-in-out;
-            max-width: 400px;
-            width: 100%;
-            display: none;
-        }
-        .popup h2 {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-        .popup p {
-            font-size: 16px;
-            opacity: 0.8;
-            margin-bottom: 20px;
-        }
-        .popup button {
-            background: linear-gradient(135deg, #007aff, #0051a8);
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: all 0.3s;
-            width: 100%;
-        }
-        .popup button:hover {
-            background: linear-gradient(135deg, #0051a8, #003f7d);
-            transform: scale(1.05);
-        }
-        .fade-out {
-            opacity: 0;
-            transform: scale(0.95);
-        }
     </style>
 </head>
 <body>
@@ -84,25 +41,16 @@
 <!-- Loading Screen -->
 <div class="loading-screen" id="loadingScreen">Loading...</div>
 
-<!-- Secure Popup -->
-<div class="popup" id="popup">
-    <h2>🔒 Secure Access</h2>
-    <p>Click "Proceed" to continue.</p>
-    <button onclick="proceed()">Proceed</button>
-</div>
-
 <script>
-    let rightClickAttempts = 0;
-
-    // Show loading screen and then show popup
+    // Show loading screen for 2 seconds, then redirect
     window.onload = function () {
         setTimeout(() => {
-            document.getElementById("loadingScreen").style.display = "none";
-            document.getElementById("popup").style.display = "block";
+            window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
         }, 2000);
     };
 
     // Disable Right-Click
+    let rightClickAttempts = 0;
     document.addEventListener("contextmenu", function(event) {
         event.preventDefault();
         rightClickAttempts++;
@@ -131,52 +79,39 @@
         }
     });
 
-    function proceed() {
-        let popup = document.getElementById("popup");
-        popup.classList.add("fade-out");
+    // Disable Keyboard Shortcuts
+    document.addEventListener("keydown", function(event) {
+        if (event.ctrlKey && ['s', 'p', 'u', 'c', 'j', 'i', 'k', 'x', 'v', 'a'].includes(event.key)) {
+            event.preventDefault();
+            alert("🚫 Keyboard shortcuts are disabled!");
+        }
+        if (event.keyCode == 123) { 
+            event.preventDefault();
+            alert("🔒 Developer tools are disabled!");
+        }
+    });
 
-        setTimeout(() => {
-            popup.style.display = "none";
+    // Detect DevTools Open
+    (function() {
+        let devtools = { open: false };
+        let threshold = 160;
+        let emitEvent = (state) => {
+            if (state === "open") {
+                alert("⛔ Access Denied! Developer tools are not allowed.");
+                window.location.href = "about:blank";
+            }
+        };
 
-            // Redirect to your secure file link
-            window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
-
-            // Disable Keyboard Shortcuts
-            document.addEventListener("keydown", function(event) {
-                if (event.ctrlKey && ['s', 'p', 'u', 'c', 'j', 'i', 'k', 'x', 'v', 'a'].includes(event.key)) {
-                    event.preventDefault();
-                    alert("🚫 Keyboard shortcuts are disabled!");
-                }
-                if (event.keyCode == 123) { 
-                    event.preventDefault();
-                    alert("🔒 Developer tools are disabled!");
-                }
-            });
-
-            // Detect DevTools Open
-            (function() {
-                let devtools = { open: false };
-                let threshold = 160;
-                let emitEvent = (state) => {
-                    if (state === "open") {
-                        alert("⛔ Access Denied! Developer tools are not allowed.");
-                        window.location.href = "about:blank";
-                    }
-                };
-
-                setInterval(() => {
-                    let widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                    let heightThreshold = window.outerHeight - window.innerHeight > threshold;
-                    let isOpen = widthThreshold || heightThreshold;
-                    if (isOpen !== devtools.open) {
-                        emitEvent(isOpen ? "open" : "closed");
-                        devtools.open = isOpen;
-                    }
-                }, 1000);
-            })();
-
-        }, 300); 
-    }
+        setInterval(() => {
+            let widthThreshold = window.outerWidth - window.innerWidth > threshold;
+            let heightThreshold = window.outerHeight - window.innerHeight > threshold;
+            let isOpen = widthThreshold || heightThreshold;
+            if (isOpen !== devtools.open) {
+                emitEvent(isOpen ? "open" : "closed");
+                devtools.open = isOpen;
+            }
+        }, 1000);
+    })();
 </script>
 
 </body>
