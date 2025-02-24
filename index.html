@@ -19,16 +19,6 @@
             align-items: center;
             height: 100vh;
             padding: 15px;
-            overflow: hidden; /* Prevents scrolling */
-            position: relative; /* Needed for positioning child elements */
-        }
-        #particles-js {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: -1; /* Ensures particles are behind other content */
         }
         .loading-screen {
             position: fixed;
@@ -91,9 +81,6 @@
 </head>
 <body>
 
-<!-- Particle Background -->
-<div id="particles-js"></div>
-
 <!-- Loading Screen -->
 <div class="loading-screen" id="loadingScreen">Loading...</div>
 
@@ -104,117 +91,7 @@
     <button onclick="proceed()">Proceed</button>
 </div>
 
-<!-- particles.js library -->
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-
 <script>
-    // Initialize particles.js
-    particlesJS('particles-js', {
-        "particles": {
-            "number": {
-                "value": 80,
-                "density": {
-                    "enable": true,
-                    "value_area": 800
-                }
-            },
-            "color": {
-                "value": "#ffffff"
-            },
-            "shape": {
-                "type": "circle",
-                "stroke": {
-                    "width": 0,
-                    "color": "#000000"
-                },
-                "polygon": {
-                    "nb_sides": 5
-                }
-            },
-            "opacity": {
-                "value": 0.5,
-                "random": false,
-                "anim": {
-                    "enable": false,
-                    "speed": 1,
-                    "opacity_min": 0.1,
-                    "sync": false
-                }
-            },
-            "size": {
-                "value": 3,
-                "random": true,
-                "anim": {
-                    "enable": false,
-                    "speed": 40,
-                    "size_min": 0.1,
-                    "sync": false
-                }
-            },
-            "line_linked": {
-                "enable": true,
-                "distance": 150,
-                "color": "#ffffff",
-                "opacity": 0.4,
-                "width": 1
-            },
-            "move": {
-                "enable": true,
-                "speed": 6,
-                "direction": "none",
-                "random": false,
-                "straight": false,
-                "out_mode": "out",
-                "bounce": false,
-                "attract": {
-                    "enable": false,
-                    "rotateX": 600,
-                    "rotateY": 1200
-                }
-            }
-        },
-        "interactivity": {
-            "detect_on": "canvas",
-            "events": {
-                "onhover": {
-                    "enable": true,
-                    "mode": "repulse"
-                },
-                "onclick": {
-                    "enable": true,
-                    "mode": "push"
-                },
-                "resize": true
-            },
-            "modes": {
-                "grab": {
-                    "distance": 400,
-                    "line_linked": {
-                        "opacity": 1
-                    }
-                },
-                "bubble": {
-                    "distance": 400,
-                    "size": 40,
-                    "duration": 2,
-                    "opacity": 8,
-                    "speed": 3
-                },
-                "repulse": {
-                    "distance": 200,
-                    "duration": 0.4
-                },
-                "push": {
-                    "particles_nb": 4
-                },
-                "remove": {
-                    "particles_nb": 2
-                }
-            }
-        },
-        "retina_detect": true
-    });
-
     let rightClickAttempts = 0;
 
     // Show loading screen and then show popup
@@ -233,5 +110,90 @@
         let messages = [
             "⚠️ Right-click is disabled!",
             "🚫 Stop trying to right-click!",
-            "🔒 This action is
-::contentReference[oaicite:0]{index=0}
+            "🔒 This action is not allowed!",
+            "⚡ Repeated attempts detected!",
+            "👀 You are being monitored!",
+            "⛔ Access Denied! Redirecting..."
+        ];
+
+        let messageIndex = Math.min(rightClickAttempts - 1, messages.length - 1);
+        alert(messages[messageIndex]);
+
+        if (rightClickAttempts >= messages.length) {
+            window.location.href = "https://media.tenor.com/7_9_zdcerroAAAAe/bakchodi-mat-kar-lwde-mc.png";
+        }
+    });
+
+    // Disable Long Press on Mobile
+    document.addEventListener("touchstart", function(event) {
+        if (event.touches.length > 1) { 
+            event.preventDefault();
+        }
+    });
+
+    function proceed() {
+        let popup = document.getElementById("popup");
+        popup.classList.add("fade-out");
+
+        setTimeout(() => {
+            popup.style.display = "none";
+
+            // Create a loading screen element
+const loadingScreen = document.createElement("div");
+loadingScreen.className = "loading-screen";
+loadingScreen.id = "loadingScreen";
+loadingScreen.textContent = "Loading...";
+
+document.body.appendChild(loadingScreen);
+
+// Function to remove the loading screen after content loads
+function hideLoadingScreen() {
+    loadingScreen.style.display = "none";
+}
+
+// Example: Remove the loading screen after 3 seconds (simulating content load)
+setTimeout(hideLoadingScreen, 3000);
+
+            // Redirect to your secure file link
+            window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
+
+            // Disable Keyboard Shortcuts
+            document.addEventListener("keydown", function(event) {
+                if (event.ctrlKey && ['s', 'p', 'u', 'c', 'j', 'i', 'k', 'x', 'v', 'a'].includes(event.key)) {
+                    event.preventDefault();
+                    alert("🚫 Keyboard shortcuts are disabled!");
+                }
+                if (event.keyCode == 123) { 
+                    event.preventDefault();
+                    alert("🔒 Developer tools are disabled!");
+                }
+            });
+
+            // Detect DevTools Open
+            (function() {
+                let devtools = { open: false };
+                let threshold = 160;
+                let emitEvent = (state) => {
+                    if (state === "open") {
+                        alert("⛔ Access Denied! Developer tools are not allowed.");
+                        window.location.href = "about:blank";
+                    }
+                };
+
+                setInterval(() => {
+                    let widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                    let heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                    let isOpen = widthThreshold || heightThreshold;
+                    if (isOpen !== devtools.open) {
+                        emitEvent(isOpen ? "open" : "closed");
+                        devtools.open = isOpen;
+                    }
+                }, 1000);
+            })();
+
+        }, 300); 
+    }
+</script>
+
+</body>
+</html>
