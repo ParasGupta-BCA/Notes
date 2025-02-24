@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Access Notes</title>
+    <title>Secure Access</title>
     <style>
         * {
             margin: 0;
@@ -86,7 +86,7 @@
 
 <!-- Secure Popup -->
 <div class="popup" id="popup">
-    <h2>🔒 Secure Access Notes</h2>
+    <h2>🔒 Secure Access</h2>
     <p>Click "Proceed" to continue.</p>
     <button onclick="proceed()">Proceed</button>
 </div>
@@ -94,6 +94,7 @@
 <script>
     let rightClickAttempts = 0;
 
+    // Show loading screen and then show popup
     window.onload = function () {
         setTimeout(() => {
             document.getElementById("loadingScreen").style.display = "none";
@@ -101,6 +102,7 @@
         }, 2000);
     };
 
+    // Disable Right-Click
     document.addEventListener("contextmenu", function(event) {
         event.preventDefault();
         rightClickAttempts++;
@@ -122,6 +124,7 @@
         }
     });
 
+    // Disable Long Press on Mobile
     document.addEventListener("touchstart", function(event) {
         if (event.touches.length > 1) { 
             event.preventDefault();
@@ -135,19 +138,59 @@
         setTimeout(() => {
             popup.style.display = "none";
 
-            const loadingScreen = document.createElement("div");
-            loadingScreen.className = "loading-screen";
-            loadingScreen.id = "loadingScreen";
-            loadingScreen.textContent = "Loading...";
-            document.body.appendChild(loadingScreen);
+            // Create a loading screen element
+const loadingScreen = document.createElement("div");
+loadingScreen.className = "loading-screen";
+loadingScreen.id = "loadingScreen";
+loadingScreen.textContent = "Loading...";
 
-            function hideLoadingScreen() {
-                loadingScreen.style.display = "none";
-            }
+document.body.appendChild(loadingScreen);
 
-            setTimeout(hideLoadingScreen, 3000);
+// Function to remove the loading screen after content loads
+function hideLoadingScreen() {
+    loadingScreen.style.display = "none";
+}
 
-            window.location.href = "https://onedrive.live.com/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
+// Example: Remove the loading screen after 3 seconds (simulating content load)
+setTimeout(hideLoadingScreen, 3000);
+
+            // Redirect to your secure file link
+            window.location.href = "https://1drv.ms/f/c/714d8dab5e26bec2/EuDf3qrQY95KgVqJcor7jTQBsaJpqlQtz0WLgC9AiL8WIg?e=bJPAwS";
+
+            // Disable Keyboard Shortcuts
+            document.addEventListener("keydown", function(event) {
+                if (event.ctrlKey && ['s', 'p', 'u', 'c', 'j', 'i', 'k', 'x', 'v', 'a'].includes(event.key)) {
+                    event.preventDefault();
+                    alert("🚫 Keyboard shortcuts are disabled!");
+                }
+                if (event.keyCode == 123) { 
+                    event.preventDefault();
+                    alert("🔒 Developer tools are disabled!");
+                }
+            });
+
+            // Detect DevTools Open
+            (function() {
+                let devtools = { open: false };
+                let threshold = 160;
+                let emitEvent = (state) => {
+                    if (state === "open") {
+                        alert("⛔ Access Denied! Developer tools are not allowed.");
+                        window.location.href = "about:blank";
+                    }
+                };
+
+                setInterval(() => {
+                    let widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                    let heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                    let isOpen = widthThreshold || heightThreshold;
+                    if (isOpen !== devtools.open) {
+                        emitEvent(isOpen ? "open" : "closed");
+                        devtools.open = isOpen;
+                    }
+                }, 1000);
+            })();
+
         }, 300); 
     }
 </script>
